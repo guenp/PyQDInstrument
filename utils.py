@@ -7,6 +7,12 @@ _PORT = int(config.get('PyQDInstrument', 'port'))
 _REMOTE_HOST = config.get('PyQDInstrument', 'remote_host')
 _REMOTE_PORT = int(config.get('PyQDInstrument', 'remote_port'))
 
+def connect_socket(HOST, PORT):
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, PORT))
+    return s
+
 def ask_socket(s, cmd):
     '''query socket and return response'''
     import select

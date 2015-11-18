@@ -1,40 +1,14 @@
-from .utils import ask_socket, create_instrument, _HOST, _PORT
+from .utils import connect_socket, ask_socket, create_instrument, _HOST, _PORT
+import socket
 
-class Instrument(object):
-    '''
-    Instrument base class
-    '''
-    def __init__(self, name, *args, **kwargs):
-        params = []
-        for key in vars(self).keys():
-            if key[0]=='_':
-                params.append(key[1:])
-        self.params = params
-        self.name = name
-        super(Instrument, self).__init__()
-        
-    def _repr_html_(self):
-        '''
-        Show a pretty HTML representation of the object for ipynb.
-        '''
-        html = ["<b>",self.name,"</b> - "]
-        html.append(self.__doc__)
-        html.append("<table width=100%>")
-        for key in self.params:
-            html.append("<tr>")
-            html.append("<td>{0}</td>".format(key))
-            html.append("<td>{0}</td>".format(getattr(self,key)))
-            html.append("</tr>")
-        html.append("</table>")
-        return ''.join(html)
-
-class PPMS(Instrument):
+class PPMS(object):
     '''
     Wrapper for talking to the C# library for controlling the Quantum Design PPMS.
     Make sure to run QDInstrument server .exe on the control PC.
     host, port = remote IP address and port.
     '''
     def __init__(self, host=_HOST, port=_PORT):
+        super(PPMS, self).__init__()
         self._temperature = 300
         self._temperature_status = ''
         self.temperature_rate = 10
@@ -46,7 +20,6 @@ class PPMS(Instrument):
         self.field_mode = 'Persistent'
         self._chamber = ''
         self.ins = create_instrument(host, port)
-        super(PPMS, self).__init__('ppms')
         self._temperature_approach_dict = {'FastSettle': self.ins.TemperatureApproach.FastSettle, 'NoOvershoot': self.ins.TemperatureApproach.NoOvershoot}
         self._field_approach_dict = {'Linear': self.ins.FieldApproach.Linear, 'NoOvershoot': self.ins.FieldApproach.NoOvershoot, 'Oscillate': self.ins.FieldApproach.Oscillate}
         self._field_mode_dict = {'Driven': self.ins.FieldMode.Driven, 'Persistent': self.ins.FieldMode.Persistent}
@@ -88,3 +61,35 @@ class PPMS(Instrument):
     def chamber(self):
         self._chamber = str(self.ins.GetChamber(0)[1])
         return self._chamber
+
+class RemotePPMS(object):
+    '''
+    For remote operation from e.g. ipython notebook
+    '''
+    def __init__(self, host, port, name='ppms'):
+        self.name = name
+        self.s = connect_socket(host, port)
+        for param in ['temperature', 'temperature_rate', 'field', 'field_rate']:
+            setattr(RemotePPMS,param,property(fget=eval('lambda: ask_socket(self.s, %s)' %param),
+                                                fset=eval('lambda value: ask_socket(%s = %s)' %(param, value))))
+        for param in ['temperature_approach', 'field_approach', 'field_mode']:
+            setattr(RemotePPMS,param,property(fget=eval('lambda: ask_socket(self.s, %s)' %param),
+                                                fset=eval("lambda value: ask_socket(%s = '%s')" %(param, value))))
+        for param in ['temperature_status', 'field_status', 'chamber']:
+            setattr(RemotePPMS,param,property(fget=eval('lambda: ask_socket(self.s, %s)' %param)))
+        self.params = ['temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'temperature_status', 'field_status', 'chamber']
+
+    def _repr_html_(self):
+        '''
+        Show a pretty HTML representation of the object for ipynb.
+        '''
+        html = ["<b>",self.name,"</b> - "]
+        html.append(self.__doc__)
+        html.append("<table width=100%>")
+        for key in self.params:
+            html.append("<tr>")
+            html.append("<td>{0}</td>".format(key))
+            html.append("<td>{0}</td>".format(getattr(self,key)))
+            html.append("</tr>")
+        html.append("</table>")
+        return ''.join(html)
