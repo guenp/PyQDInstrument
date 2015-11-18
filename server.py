@@ -1,8 +1,7 @@
 import socket
-from .utils import _HOST, _PORT, _REMOTE_HOST, _REMOTE_PORT
 from .pqdinstrument import PPMS
 
-def run_server(host=_REMOTE_HOST, port=_REMOTE_PORT, instrument_host=_HOST, instrument_port=_PORT, verbose=True):
+def run_server(host='', port=0, instrument_host='', instrument_port=11000, verbose=True):
     server = Server(host, port, instrument_host, instrument_port)
     server.run(verbose)
 

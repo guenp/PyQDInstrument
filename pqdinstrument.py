@@ -66,27 +66,37 @@ class RemotePPMS(object):
     '''
     For remote operation from e.g. ipython notebook
     '''
-    def __init__(self, host, port, name='ppms'):
-        self.name = name
-        self.s = connect_socket(host, port)
-        for param in ['temperature', 'temperature_rate', 'field', 'field_rate']:
-            setattr(RemotePPMS,param,property(fget=eval('lambda: ask_socket(self.s, %s)' %param),
-                                                fset=eval('lambda value: ask_socket(%s = %s)' %(param, value))))
-        for param in ['temperature_approach', 'field_approach', 'field_mode']:
-            setattr(RemotePPMS,param,property(fget=eval('lambda: ask_socket(self.s, %s)' %param),
-                                                fset=eval("lambda value: ask_socket(%s = '%s')" %(param, value))))
+    def __init__(self, host, port, s=None, name='ppms'):
+        self._name = name
+        if s == None:
+            self._s = connect_socket(host, port)
+        else:
+            self._s = s
+        for param in ['temperature', 'temperature_rate', 'field', 'field_rate', 'temperature_approach', 'field_approach', 'field_mode']:
+            setattr(RemotePPMS,param,property(fget=eval("lambda self: self._get_param('%s')" %param),
+                                                fset=eval("lambda self, value: self._set_param('%s',value)" %param)))
         for param in ['temperature_status', 'field_status', 'chamber']:
-            setattr(RemotePPMS,param,property(fget=eval('lambda: ask_socket(self.s, %s)' %param)))
-        self.params = ['temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'temperature_status', 'field_status', 'chamber']
+            setattr(RemotePPMS,param,property(fget=eval("lambda self: self._get_param('%s')" %param)))
+        self._params = ['temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'temperature_status', 'field_status', 'chamber']
+
+    def _get_param(self, param):
+        return ask_socket(self._s, param)
+
+    def _set_param(self, param, value):
+        if type(value) == str:
+            cmd = "%s = '%s'" %(param, value)
+        else:
+            cmd = '%s = %s' %(param, value)
+        return ask_socket(self._s, cmd)
 
     def _repr_html_(self):
         '''
         Show a pretty HTML representation of the object for ipynb.
         '''
-        html = ["<b>",self.name,"</b> - "]
+        html = ["<b>",self._name,"</b> - "]
         html.append(self.__doc__)
         html.append("<table width=100%>")
-        for key in self.params:
+        for key in self._params:
             html.append("<tr>")
             html.append("<td>{0}</td>".format(key))
             html.append("<td>{0}</td>".format(getattr(self,key)))

@@ -1,11 +1,7 @@
-import ConfigParser
-
-config = ConfigParser.SafeConfigParser()
-config.readfp(open('example.cfg'))
-_HOST = config.get('PyQDInstrument', 'host')
-_PORT = int(config.get('PyQDInstrument', 'port'))
-_REMOTE_HOST = config.get('PyQDInstrument', 'remote_host')
-_REMOTE_PORT = int(config.get('PyQDInstrument', 'remote_port'))
+_HOST = ''
+_PORT = 50008
+_REMOTE_HOST = ''
+_REMOTE_PORT = 11000
 
 def connect_socket(HOST, PORT):
     import socket
@@ -24,7 +20,7 @@ def ask_socket(s, cmd):
     data = s.recv(1024)
     try:
         ans = eval(data)
-    except (IndentationError, SyntaxError):
+    except (IndentationError, SyntaxError, NameError):
         ans = data.decode()
     return ans
 
