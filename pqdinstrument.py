@@ -39,17 +39,18 @@ class PPMS(Instrument):
         self._temperature_status = ''
         self.temperature_rate = 10
         self.temperature_approach = 'FastSettle'
-        self._temperature_approach_dict = {'FastSettle': 0, 'NoOvershoot': 1}
         self._field = 0
         self._field_status = '' #Charging (6), CoolingSwitch (3), CurrentError (8), Discharging (7), Iterating (5), MagnetFailure (15), MagnetUnknown (0), StableDriven (4), StablePersistent (1), Unused10 (10), Unused11 (11), Unused12 (12), Unused13 (13), Unused14 (14), Unused9 (9), WarmingSwitch (2)
         self.field_rate = 100
         self.field_approach = 'Linear'
-        self._field_approach_dict = {'Linear': 0, 'NoOvershoot': 1, 'Oscillate': 2}
         self.field_mode = 'Driven'
-        self._field_mode_dict = {'Driven': 1, 'Persistent': 0}
         self._chamber = ''
         self.ins = create_instrument(host, port)
         super(PPMS, self).__init__('ppms')
+        self._temperature_approach_dict = {'FastSettle': self.ins.TemperatureApproach.FastSettle, 'NoOvershoot': self.ins.TemperatureApproach.NoOvershoot}
+        self._field_approach_dict = {'Linear': self.ins.FieldApproach.Linear, 'NoOvershoot': self.ins.FieldApproach.NoOvershoot, 'Oscillate': self.ins.FieldApproach.Oscillate}
+        self._field_mode_dict = {'Driven': self.ins.FieldMode.Driven, 'Persistent': self.ins.FieldMode.Persistent}
+
 
     @property
     def temperature(self):
