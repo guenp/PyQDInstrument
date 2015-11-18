@@ -43,7 +43,7 @@ class PPMS(Instrument):
         self._field_status = '' #Charging (6), CoolingSwitch (3), CurrentError (8), Discharging (7), Iterating (5), MagnetFailure (15), MagnetUnknown (0), StableDriven (4), StablePersistent (1), Unused10 (10), Unused11 (11), Unused12 (12), Unused13 (13), Unused14 (14), Unused9 (9), WarmingSwitch (2)
         self.field_rate = 100
         self.field_approach = 'Linear'
-        self.field_mode = 'Driven'
+        self.field_mode = 'Persistent'
         self._chamber = ''
         self.ins = create_instrument(host, port)
         super(PPMS, self).__init__('ppms')
