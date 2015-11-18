@@ -1,12 +1,12 @@
 import clr
 import socket
 
-def run_server(instruments, verbose=False):
-	server = Server(instruments)
+def run_server(host='192.168.0.103', port=50008, instrument_host='192.168.0.101', instrument_port=11000, verbose=True):
+	server = Server(host, port, instrument_host, instrument_port)
 	server.run(verbose)
 
 class Server():
-	def __init__(self, host='192.168.0.103', port=50008, instrument_host='192.168.0.101', instrument_port=11000):
+	def __init__(self, host, port, instrument_host, instrument_port):
 		self.ins = self.create_instrument(instrument_host,instrument_port)
 
 	def create_instrument(self, host, port):
