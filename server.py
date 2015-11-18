@@ -2,12 +2,13 @@ import socket
 from .pqdinstrument import PPMS
 
 def run_server(host='', port=0, instrument_host='', instrument_port=11000, verbose=True):
+	'''Run a QDInstrument server inside an IronPython console.'''
     server = Server(host, port, instrument_host, instrument_port)
     server.run(verbose)
 
 class Server():
     '''
-    Server for connecting remotely to the IronPython console.
+    Server for connecting remotely to the IronPython console through a socket connection.
     '''
     def __init__(self, remote_host, remote_port, instrument_host, instrument_port):
         self.HOST = remote_host

@@ -4,8 +4,8 @@ import socket
 class PPMS(object):
     '''
     Wrapper for talking to the C# library for controlling the Quantum Design PPMS.
-    Make sure to run QDInstrument server .exe on the control PC.
-    host, port = remote IP address and port.
+    Make sure to run QDInstrument_Server.exe on the control PC.
+    host, port = IP address and port of the control PC.
     '''
     def __init__(self, host=_HOST, port=_PORT):
         super(PPMS, self).__init__()
@@ -23,7 +23,6 @@ class PPMS(object):
         self._temperature_approach_dict = {'FastSettle': self.ins.TemperatureApproach.FastSettle, 'NoOvershoot': self.ins.TemperatureApproach.NoOvershoot}
         self._field_approach_dict = {'Linear': self.ins.FieldApproach.Linear, 'NoOvershoot': self.ins.FieldApproach.NoOvershoot, 'Oscillate': self.ins.FieldApproach.Oscillate}
         self._field_mode_dict = {'Driven': self.ins.FieldMode.Driven, 'Persistent': self.ins.FieldMode.Persistent}
-
 
     @property
     def temperature(self):
@@ -64,7 +63,10 @@ class PPMS(object):
 
 class RemotePPMS(object):
     '''
-    For remote operation from e.g. ipython notebook
+    For remote operation of the Quantum Design PPMS.
+    Make sure to run PyQDInstrument.run_server() in an IronPython console on a machine that can connect to the PPMS control PC's QDInstrument_Server.exe program.
+    Attributes represent the system control parameters:
+    'temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'temperature_status', 'field_status', 'chamber'
     '''
     def __init__(self, host, port, s=None, name='ppms'):
         self._name = name
