@@ -1,6 +1,6 @@
 # PyQDInstrument #
 
-Python driver for the Quantum Design PPMS.
+Python driver for the Quantum Design Physical Property Measurement System (PPMS®) cryostat.
 
 # Requirements #
 
@@ -11,7 +11,7 @@ Python driver for the Quantum Design PPMS.
 
 - Run the QDInstrument_Server.exe program on the PPMS control PC.
 - Copy the `QDInstrument.DLL` file to the IronPython DLL folder.
-- Open an IronPython console on a measurement PC that can access the control PC's port on which the server can be contacted.
+- Open an IronPython console on a measurement PC (Windows) that can access the control PC's port on which the server can be contacted.
 - Add PyQDInstrument to the pythonpath or add an `pqi\__init__.py` file with 
 
 ```python
@@ -25,11 +25,11 @@ pqi.run_server(HOST, PORT, PPMS_IP, PPMS_PORT)
 ```
 you can find the PPMS_PORT in the ```QDInstrument_Server.exe``` program.
 
-- Open your favorite Python version and run e.g.
+- Open your favorite Python distribution on a (remote) PC/Mac and run e.g.
 
 ```python
 import PyQDInstrument as pqi
-ppms = pqi.PPMS(HOST, PORT)
+ppms = pqi.RemotePPMS(HOST, PORT)
 #get temperature
 ppms.temperature
 #set temperature
@@ -51,6 +51,10 @@ ppms.temperature = 200
 - ```chamber```: get the chamber status message.
 
 Or, if you really wish, connect to the socket via your own data acquisition software.
-Send string commands to the socket in the form "temperature" or "temperature = 200", basically the same as you would when changing the object attributes (just remove `ppms.`).
+Send string commands to the socket in the form ```"temperature"``` or ```"temperature = 200"```.
+
+Pull requests are welcome.
+
+Please cite this repo if used in academia.
 
 Have fun!
