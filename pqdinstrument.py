@@ -28,53 +28,53 @@ class Instrument():
         return ''.join(html)
 
 class PPMS(Instrument):
-	'''
-	Wrapper for talking to the C# library for controlling the Quantum Design PPMS.
-	Make sure to run QDInstrument server .exe on the control PC.
-	host, port = remote IP address and port.
-	'''
-	def __init__(self, host=_HOST, port=_PORT):
-		self._temperature = 300
-		self._temperature_status = ''
-		self.temperature_rate = 10
-		self._temperature_approach = 0 #FastSettle (0), NoOvershoot (1)
-		self._field = 0
-		self._field_status = ''
-		self.field_rate = 100
-		self._field_approach = 0 #Linear (0), NoOvershoot (1), Oscillate (2)
-		self._field_mode = 0 #Driven (1), Persistent (0)
-		self._chamber = ''
-		self.ins = create_instrument(host, port)
+    '''
+    Wrapper for talking to the C# library for controlling the Quantum Design PPMS.
+    Make sure to run QDInstrument server .exe on the control PC.
+    host, port = remote IP address and port.
+    '''
+    def __init__(self, host=_HOST, port=_PORT):
+        self._temperature = 300
+        self._temperature_status = ''
+        self.temperature_rate = 10
+        self._temperature_approach = 0 #FastSettle (0), NoOvershoot (1)
+        self._field = 0
+        self._field_status = ''
+        self.field_rate = 100
+        self._field_approach = 0 #Linear (0), NoOvershoot (1), Oscillate (2)
+        self._field_mode = 0 #Driven (1), Persistent (0)
+        self._chamber = ''
+        self.ins = create_instrument(host, port)
 
-	@property
-	def temperature(self):
-		ret = self.ins.GetTemperature(0,0)
-		self._temperature = ret[1]
-		self._temperature_status = str(ret[2])
-	    return self._temperature
+    @property
+    def temperature(self):
+        ret = self.ins.GetTemperature(0,0)
+        self._temperature = ret[1]
+        self._temperature_status = str(ret[2])
+        return self._temperature
 
-	@temperature.setter
-	def temperature(self, value):
-		self.ins.SetTemperature(value, self.temperature_rate, self._temperature_approach)
+    @temperature.setter
+    def temperature(self, value):
+        self.ins.SetTemperature(value, self.temperature_rate, self._temperature_approach)
 
-	@property
-	def temperature_status(self):
-		self.temperature
-	    return self._temperature_status
-	
-	@property
-	def field(self):
-		ret = self.ins.GetField(0,0)
-		self._field = ret[1]
-		self._field_status = str(ret[2])
-	    return self._field
+    @property
+    def temperature_status(self):
+        self.temperature
+        return self._temperature_status
+    
+    @property
+    def field(self):
+        ret = self.ins.GetField(0,0)
+        self._field = ret[1]
+        self._field_status = str(ret[2])
+        return self._field
 
-	@field.setter
-	def field(self, value):
-		self.ins.SetField(self.value, self.field_rate, self._field_approach, self._field_mode)
+    @field.setter
+    def field(self, value):
+        self.ins.SetField(self.value, self.field_rate, self._field_approach, self._field_mode)
 
-	@property
-	def field_status(self):
-		self.field
-	    return self._field_status
-	
+    @property
+    def field_status(self):
+        self.field
+        return self._field_status
+    
