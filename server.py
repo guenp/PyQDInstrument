@@ -12,7 +12,7 @@ class Server():
     def __init__(self, remote_host, remote_port, instrument_host, instrument_port):
         self.HOST = remote_host
         self.PORT = remote_port
-        self.ppms = PPMS(_HOST, _PORT)
+        self.ppms = PPMS(instrument_host, instrument_port)
 
     def run(self, verbose=False):
         '''Run a measurement server for remote communication.'''
