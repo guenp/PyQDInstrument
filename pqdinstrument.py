@@ -46,7 +46,7 @@ class PPMS(Instrument):
         self.field_approach = 'Linear'
         self._field_approach_dict = {'Linear': 0, 'NoOvershoot': 1, 'Oscillate': 2}
         self.field_mode = 'Driven'
-        self._field_mode_dict = {'Driven': 0, 'Persistent': 1}
+        self._field_mode_dict = {'Driven': 1, 'Persistent': 0}
         self._chamber = ''
         self.ins = create_instrument(host, port)
         super(PPMS, self).__init__('ppms')
