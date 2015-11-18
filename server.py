@@ -7,6 +7,8 @@ def run_server(host='192.168.0.103', port=50008, instrument_host='192.168.0.101'
 
 class Server():
 	def __init__(self, host, port, instrument_host, instrument_port):
+		self.host = host
+		self.port = port
 		self.ins = self.create_instrument(instrument_host,instrument_port)
 
 	def create_instrument(self, host, port):
