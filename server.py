@@ -1,28 +1,23 @@
-import clr
 import socket
+from .utils import _HOST, _PORT, _REMOTE_HOST, _REMOTE_PORT
+from .pqdinstrument import PPMS
 
-def run_server(host='', port=50008, instrument_host='192.168.0.101', instrument_port=11000, verbose=True):
-	server = Server(host, port, instrument_host, instrument_port)
-	server.run(verbose)
-
-def create_instrument(host, port):
-		'''Create remote QDInstrument'''
-		import clr
-		clr.AddReference('QDInstrument')
-		from QuantumDesign import QDInstrument
-		ppms = QDInstrument.QDInstrumentBase.QDInstrumentType.PPMS
-		ins = QDInstrument.QDInstrumentFactory.GetQDInstrument(ppms, True, host, port)
-		return ins
+def run_server(host=_REMOTE_HOST, port=_REMOTE_PORT, instrument_host=_HOST, instrument_port=_PORT, verbose=True):
+    server = Server(host, port, instrument_host, instrument_port)
+    server.run(verbose)
 
 class Server():
-	def __init__(self, host, port, instrument_host, instrument_port):
-		self.HOST = host
-		self.PORT = port
-		self.ins = create_instrument(instrument_host,instrument_port)	
+	'''
+	Server for connecting remotely to the IronPython console.
+	'''
+	def __init__(self, remote_host, remote_port, instrument_host, instrument_port):
+		self.HOST = remote_host
+		self.PORT = remote_port
+		self.ppms = PPMS(_HOST, _PORT)
 
 	def run(self, verbose=False):
 	    '''Run a measurement server for remote communication.'''
-	    ins = self.ins
+	    ppms = self.ppms
 	    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	    s.bind((self.HOST, self.PORT))
@@ -33,6 +28,7 @@ class Server():
 	        cmd = conn.recv(1024)
 	        if not cmd: break
 	        try:
+	        	cmd = 'ppms.' + cmd
 	            if verbose: print(cmd.decode())
 	            conn.sendall(str(eval(cmd)).encode())
 	        except (SyntaxError, NameError, AttributeError):
