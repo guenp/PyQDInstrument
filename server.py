@@ -28,9 +28,14 @@ class Server():
             cmd = conn.recv(1024)
             if not cmd: break
             try:
-                cmd = 'ppms.' + cmd
+                cmd = b'ppms.' + cmd
                 if verbose: print(cmd.decode())
-                conn.sendall(str(eval(cmd)).encode())
+                if b'=' in cmd:
+                    exec(cmd)
+                    response = 'True'
+                else:
+                    response = str(eval(cmd))
+                conn.sendall(response.encode())
             except (SyntaxError, NameError, AttributeError):
                 conn.sendall(b'Command not recognized.')
         conn.close()

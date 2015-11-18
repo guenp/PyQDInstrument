@@ -1,9 +1,11 @@
 import ConfigParser
 
-config = ConfigParser.SafeConfigParser({'host': '', 'port': 0})
-config.read('example.cfg')
+config = ConfigParser.SafeConfigParser()
+config.readfp(open('example.cfg'))
 _HOST = config.get('PyQDInstrument', 'host')
-_PORT = config.get('PyQDInstrument', 'port')
+_PORT = int(config.get('PyQDInstrument', 'port'))
+_REMOTE_HOST = config.get('PyQDInstrument', 'remote_host')
+_REMOTE_PORT = int(config.get('PyQDInstrument', 'remote_port'))
 
 def ask_socket(s, cmd):
     '''query socket and return response'''

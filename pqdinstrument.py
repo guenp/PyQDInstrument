@@ -1,6 +1,6 @@
 from .utils import ask_socket, create_instrument, _HOST, _PORT
 
-class Instrument():
+class Instrument(object):
     '''
     Instrument base class
     '''
@@ -11,6 +11,7 @@ class Instrument():
                 params.append(key[1:])
         self.params = params
         self.name = name
+        super(Instrument, self).__init__()
         
     def _repr_html_(self):
         '''
@@ -37,14 +38,15 @@ class PPMS(Instrument):
         self._temperature = 300
         self._temperature_status = ''
         self.temperature_rate = 10
-        self._temperature_approach = 0 #FastSettle (0), NoOvershoot (1)
+        self.temperature_approach = 0 #FastSettle (0), NoOvershoot (1)
         self._field = 0
         self._field_status = ''
         self.field_rate = 100
-        self._field_approach = 0 #Linear (0), NoOvershoot (1), Oscillate (2)
-        self._field_mode = 0 #Driven (1), Persistent (0)
+        self.field_approach = 0 #Linear (0), NoOvershoot (1), Oscillate (2)
+        self.field_mode = 0 #Driven (1), Persistent (0)
         self._chamber = ''
         self.ins = create_instrument(host, port)
+        super(PPMS, self).__init__('ppms')
 
     @property
     def temperature(self):
@@ -55,7 +57,7 @@ class PPMS(Instrument):
 
     @temperature.setter
     def temperature(self, value):
-        self.ins.SetTemperature(value, self.temperature_rate, self._temperature_approach)
+        self.ins.SetTemperature(value, self.temperature_rate, self.temperature_approach)
 
     @property
     def temperature_status(self):
@@ -71,10 +73,14 @@ class PPMS(Instrument):
 
     @field.setter
     def field(self, value):
-        self.ins.SetField(self.value, self.field_rate, self._field_approach, self._field_mode)
+        self.ins.SetField(value, self.field_rate, self.field_approach, self.field_mode)
 
     @property
     def field_status(self):
         self.field
         return self._field_status
-    
+
+    @property
+    def chamber(self):
+        self._chamber = str(self.ins.GetChamber(0)[1])
+        return self._chamber
