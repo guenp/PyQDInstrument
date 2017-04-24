@@ -15,7 +15,9 @@ Python driver for the Quantum Design Physical Property Measurement System (PPMSÂ
 - Add PyQDInstrument to the pythonpath or add an `pqi\__init__.py` file with 
 
 ```python
-import sys; sys.path.append('C:\whatever\My-PyQDInstrument-directory'; from PyQDInstrument import *
+import sys
+sys.path.append('C:\whatever\My-PyQDInstrument-directory')
+from PyQDInstrument import *
 ```
 - Then start a QDInstrument server:
 
