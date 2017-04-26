@@ -16,16 +16,17 @@ Python driver for the Quantum Design Physical Property Measurement System (PPMSÂ
 
 ```python
 import sys
-sys.path.append('C:\whatever\My-PyQDInstrument-directory')
+sys.path.append(r'C:\whatever\My-PyQDInstrument-directory')
 from PyQDInstrument import *
 ```
+Because Windows frequently has "\Users" (or similar) in the path, the above directory string should be a raw string (hence the r) to keep from getting accidental unicode parsing errors (\u is the unicode escape).
 - Then start a QDInstrument server:
 
 ```python
 import pqi
 pqi.run_server(HOST, PORT, PPMS_IP, PPMS_PORT)
 ```
-you can find the PPMS_PORT in the ```QDInstrument_Server.exe``` program.
+you can find the PPMS_PORT in the ```QDInstrument_Server.exe``` program. HOST and PORT can be whatever you want, as long as they aren't in use by something else and are valid. I typically use "127.0.0.2" for HOST and 50008 for PORT.
 
 - Open your favorite Python distribution on a (remote) PC/Mac and run e.g.
 

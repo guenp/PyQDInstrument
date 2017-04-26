@@ -18,6 +18,9 @@ class PPMS(object):
         self.field_rate = 100
         self.field_approach = 'Linear'
         self.field_mode = 'Persistent'
+        self._position = 0
+        self.position_approach = 0 # 0 is go to setpoint
+        self.position_speed = 0 # 0 is fastest, 14 is slowest
         self._chamber = ''
         self.ins = create_instrument(host, port)
         self._temperature_approach_dict = {'FastSettle': self.ins.TemperatureApproach.FastSettle, 'NoOvershoot': self.ins.TemperatureApproach.NoOvershoot}
@@ -61,12 +64,28 @@ class PPMS(object):
         self._chamber = str(self.ins.GetChamber(0)[1])
         return self._chamber
 
+    @property
+    def position(self):
+        ret = self.ins.GetPPMSItem(3,0,True)
+        self._position = ret[1]
+        return self._position
+
+    @position.setter
+    def position(self,angle):
+        if self.position_speed>14 :
+            self.position_speed = 14
+        if self.position_speed < 0 :
+            self.position_speed = 0
+        commandstring = 'MOVE '+str(angle)+' 0 '+ str(self.position_speed)
+        self.ins.SendPPMSCommand(commandstring,"","",0,0)
+
 class RemotePPMS(object):
     '''
     For remote operation of the Quantum Design PPMS.
     Make sure to run PyQDInstrument.run_server() in an IronPython console on a machine that can connect to the PPMS control PC's QDInstrument_Server.exe program.
     Attributes represent the system control parameters:
-    'temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'temperature_status', 'field_status', 'chamber'
+    'temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'temperature_status', 'field_status', 'chamber',
+    'position', 'position_speed'
     '''
     def __init__(self, host, port, s=None, name='ppms'):
         self._name = name
@@ -74,12 +93,12 @@ class RemotePPMS(object):
             self._s = connect_socket(host, port)
         else:
             self._s = s
-        for param in ['temperature', 'temperature_rate', 'field', 'field_rate', 'temperature_approach', 'field_approach', 'field_mode']:
+        for param in ['temperature', 'temperature_rate', 'field', 'field_rate', 'temperature_approach', 'field_approach', 'field_mode', 'position', 'position_speed']:
             setattr(RemotePPMS,param,property(fget=eval("lambda self: self._get_param('%s')" %param),
                                                 fset=eval("lambda self, value: self._set_param('%s',value)" %param)))
         for param in ['temperature_status', 'field_status', 'chamber']:
             setattr(RemotePPMS,param,property(fget=eval("lambda self: self._get_param('%s')" %param)))
-        self._params = ['temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'temperature_status', 'field_status', 'chamber']
+        self._params = ['temperature', 'temperature_rate', 'temperature_approach', 'field', 'field_rate', 'field_approach', 'field_mode', 'position', 'position_speed', 'temperature_status', 'field_status', 'chamber']
 
     def _get_param(self, param):
         return ask_socket(self._s, param)
