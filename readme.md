@@ -26,7 +26,7 @@ Because Windows frequently has "\Users" (or similar) in the path, the above dire
 import pqi
 pqi.run_server(HOST, PORT, PPMS_IP, PPMS_PORT)
 ```
-you can find the PPMS_PORT in the ```QDInstrument_Server.exe``` program. HOST and PORT can be whatever you want, as long as they aren't in use by something else and are valid. I typically use "127.0.0.2" for HOST and 50008 for PORT.
+you can find the PPMS_PORT in the ```QDInstrument_Server.exe``` program. 
 
 - Open your favorite Python distribution on a (remote) PC/Mac and run e.g.
 
