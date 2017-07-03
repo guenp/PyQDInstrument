@@ -16,10 +16,11 @@ Python driver for the Quantum Design Physical Property Measurement System (PPMSÂ
 
 ```python
 import sys
-sys.path.append(r'C:\whatever\My-PyQDInstrument-directory')
+sys.path.append(r'C:\<my_directory>\PyQDInstrument')
 from PyQDInstrument import *
 ```
-Because Windows frequently has "\Users" (or similar) in the path, the above directory string should be a raw string (hence the r) to keep from getting accidental unicode parsing errors (\u is the unicode escape).
+Because Windows frequently has `\Users` (or similar) in the path, the above directory string should be a raw string (hence the `r`) to keep from getting accidental unicode parsing errors (`\u` is the unicode escape).
+
 - Then start a QDInstrument server:
 
 ```python
@@ -57,7 +58,5 @@ Or, if you really wish, connect to the socket via your own data acquisition soft
 Send string commands to the socket in the form ```"temperature"``` or ```"temperature = 200"```.
 
 Pull requests are welcome.
-
-Please cite this repo if used in academia.
 
 Have fun!
