@@ -27,6 +27,22 @@ class PPMS(object):
         self._field_approach_dict = {'Linear': self.ins.FieldApproach.Linear, 'NoOvershoot': self.ins.FieldApproach.NoOvershoot, 'Oscillate': self.ins.FieldApproach.Oscillate}
         self._field_mode_dict = {'Driven': self.ins.FieldMode.Driven, 'Persistent': self.ins.FieldMode.Persistent}
 
+        # Generate getter properties for all the "map" items.
+        # There is more data accessible by the GetPPMSItem command, if that functionality is desired.
+        for i in range(20,30):  # numbers 20-29
+            fget = eval('lambda self: self._get_map(%i)' %i)
+            setattr(PPMS, 'map%i' %i, property(fget=fget, fset=None))
+
+    def _get_map(self, map_number):
+        '''
+        Get the value of one of the PPMS map items.
+        Numbers 20-29 are map items.
+        For more information, see page 2-13 of QD PPMS Software Manual.
+        '''
+        ret = self.ins.GetPPMSItem(map_number,0,True)
+        setattr(self, '_map%i' %map_number, ret[1])
+        return getattr(self, '_map%i' %map_number)
+
     @property
     def temperature(self):
         ret = self.ins.GetTemperature(0,0)
@@ -42,7 +58,7 @@ class PPMS(object):
     def temperature_status(self):
         self.temperature
         return self._temperature_status
-    
+
     @property
     def field(self):
         ret = self.ins.GetField(0,0)
